@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, AppBar, Button, Container, InputBase, Tab, Tabs, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, Container, TextField, Paper, Tab, Tabs, Toolbar, Typography } from '@material-ui/core';
 import { createRef, useState } from 'react';
 import './App.css';
 import EnumTable from './components/EnumTable';
@@ -9,11 +9,6 @@ import { load } from './utils';
 
 const UNTITLED = 'Untitled';
 
-const PANE_VERSION = 'version';
-const PANE_LINEUP = 'lineup';
-const PANE_PACKAGE = 'package';
-const PANE_CUSTOMER = 'customer';
-
 function App() {
   const refLoad = createRef<HTMLInputElement>();
   let file: File | undefined;
@@ -23,7 +18,6 @@ function App() {
   const [lineupList, setLineupList] = useState<Enum[]>([]);
   const [pkgList, setPkgList] = useState<Pkg[]>([]);
   const [customerList, setCustomerList] = useState<Enum[]>([]);
-  const [pane, setPane] = useState(PANE_VERSION);
   const [tabValue, setTabValue] = useState(0);
 
   function onChangeFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -130,10 +124,13 @@ function App() {
     <div className="App">
       <AppBar position='static' style={{ marginBottom: '1em' }}>
         <Toolbar>
-          <Button>New</Button>
-          <Button>Load</Button>
-          <InputBase />
-          <Button>Save</Button>
+          <Button onClick={onClickNew}>New</Button>
+          <Button onClick={() => refLoad.current?.click()}>Load</Button>
+          <TextField
+            variant='outlined'
+            value={featureName} onChange={(e) => setFeatureName(e.target.value)}
+          />
+          <Button onClick={onClickSave}>Save</Button>
         </Toolbar>
       </AppBar>
       <Container>
@@ -145,17 +142,21 @@ function App() {
             <Tab label='Packages' />
           </Tabs>
         </AppBar>
+        <input type='file' accept='.json' hidden ref={refLoad} onChange={onChangeFile} />
+        <a href='#' ref={refSave} hidden />
         <div hidden={tabValue !== 0}>
-          <Typography>Versions</Typography>
+          <Paper>
+            <Typography>Versions</Typography>
+          </Paper>
         </div>
         <div hidden={tabValue !== 1}>
-          <EnumTable title='Customers' enumList={customerList} onChange={setCustomerList} />
+          <EnumTable title='Customers' enumList={customerList} usedIndexList={usedCustomerIndexList} onChange={setCustomerList} />
         </div>
         <div hidden={tabValue !== 2}>
-          <EnumTable title='Lineups' enumList={lineupList} onChange={setLineupList} />
+          <EnumTable title='Lineups' enumList={lineupList} usedIndexList={usedLineupIndexList} onChange={setLineupList} />
         </div>
         <div hidden={tabValue !== 3}>
-          <PkgTable pkgList={pkgList} lineupList={lineupList} onChange={setPkgList} />
+          <PkgTable pkgList={pkgList} lineupList={lineupList} usedPkgIndexList={usedPkgIndexList} onChange={setPkgList} />
         </div>
       </Container>
     </div>
