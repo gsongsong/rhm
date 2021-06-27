@@ -1,4 +1,4 @@
-import { AppBar, Button, Container, TextField, Paper, Tab, Tabs, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, Container, TextField, Paper, Tab, Tabs, Toolbar, Typography, Select, CssBaseline } from '@material-ui/core';
 import { createRef, useState } from 'react';
 import './App.css';
 import EnumTable from './components/EnumTable';
@@ -122,6 +122,7 @@ function App() {
 
   return (
     <div className="App">
+      <CssBaseline></CssBaseline>
       <AppBar position='static' style={{ marginBottom: '1em' }}>
         <Toolbar>
           <Button onClick={onClickNew}>New</Button>
@@ -147,6 +148,9 @@ function App() {
         <div hidden={tabValue !== 0}>
           <Paper>
             <Typography>Versions</Typography>
+            <TextField />
+            <Select />
+            <Button variant='contained'>Add</Button>
           </Paper>
         </div>
         <div hidden={tabValue !== 1}>
