@@ -1,5 +1,5 @@
+import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@material-ui/core";
 import { useState } from "react";
-import { Button, Form, Table } from "semantic-ui-react";
 import { Enum } from "../types";
 import { findEmptyIndex } from "../utils";
 
@@ -78,61 +78,69 @@ export default function EnumTable({ title, enumList, onChange, usedIndexList }: 
   }
 
   return (
-    <Table celled compact selectable>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>{title}</Table.HeaderCell>
-          <Table.HeaderCell>Actions</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        <Table.Row active>
-          <Table.Cell>
-            <Form onSubmit={addEnumItem}>
-              <Form.Field disabled={editIndex !== -1}>
-                <input value={name} onChange={(e) => setName(e.target.value)} />
-              </Form.Field>
-            </Form>
-          </Table.Cell>
-          <Table.Cell>
-            <Button
-              icon='plus' size='tiny'
-              onClick={addEnumItem}
-              disabled={editIndex !== -1}
-            />
-          </Table.Cell>
-        </Table.Row>
-        {
-          enumList.map((enumItem) => {
-            const { index, name } = enumItem;
-            return index === editIndex ? (
-              <Table.Row key={index}>
-                <Table.Cell>
-                  <Form onSubmit={() => onSubmitRename(index)}>
-                    <Form.Field>
-                      <input value={nameNew} onChange={(e) => setNameNew(e.target.value)} />
-                    </Form.Field>
-                  </Form>
-                </Table.Cell>
-                <Table.Cell singleLine>
-                  <Button icon='check' size='tiny' onClick={() => onSubmitRename(index)} />
-                  <Button icon='cancel' size='tiny' onClick={() => setEditIndex(-1)} />
-                </Table.Cell>
-              </Table.Row>
-            ) : (
-              <Table.Row key={index}>
-                <Table.Cell>{name}</Table.Cell>
-                <Table.Cell singleLine>
-                  <Button icon='edit' size='tiny' onClick={() => onClickEdit(index)} />
-                  <Button icon='trash' size='tiny' onClick={() => removeEnumItem(index)}
-                    disabled={usedIndexList && usedIndexList.includes(index)}
-                  />
-                </Table.Cell>
-              </Table.Row>
-            )
-          })
-        }
-      </Table.Body>
-    </Table>
+    <form>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>{title}</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                <TextField
+                  label='Name' required
+                  value={name} onChange={(e) => setName(e.target.value)}
+                  disabled={editIndex !== -1}
+                />
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant='contained' onClick={addEnumItem}
+                  disabled={editIndex !== -1}
+                >
+                  Add
+                </Button>
+              </TableCell>
+            </TableRow>
+            {
+              enumList.map((enumItem) => {
+                const { index, name } = enumItem;
+                return index === editIndex ? (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <TextField
+                        label='New name' required
+                        value={nameNew} onChange={(e) => setNameNew(e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button variant='contained' onClick={() => onSubmitRename(index)}>Ok</Button>
+                      {' '}
+                      <Button variant='contained' onClick={() => setEditIndex(-1)}>Cancel</Button>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  <TableRow key={index}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>
+                      <Button variant='contained' onClick={() => onClickEdit(index)}>Edit</Button>
+                      {' '}
+                      <Button variant='contained' onClick={() => removeEnumItem(index)}
+                        disabled={usedIndexList && usedIndexList.includes(index)}
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+            }
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </form>
   );
 }
